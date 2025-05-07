@@ -9,7 +9,7 @@ Automatic Differentiation system.
 - ` mkdir build; cd build`
 - ` cmake .. -DCMAKE_BUILD_TYPE=Release` will have optimization or `cmake .. -DCMAKE_BUILD_TYPE=Debug `
 
-### Linux (x64) 💽
+### Linux (x64/clang compiler only) 💽
 
 
 Getting your system ready first.
@@ -24,5 +24,7 @@ Then
 - `git clone https://github.com/coderboyisongithub/Beaver.git`
 - ` cd Beaver`
 - ` mkdir build; cd build`
+- `export CC=clang `
+- `export CXX=clang++`
 - ` cmake .. -DCMAKE_BUILD_TYPE=Release` will have optimization or `cmake .. -DCMAKE_BUILD_TYPE=Debug `
 
