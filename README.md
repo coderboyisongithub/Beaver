@@ -1,5 +1,5 @@
 # Beaver
-Automatic Differentiation system. 
+Automatic Differentiation system. (still brewing...🍵)
 
 ## Build instruction.
 ### windows (x64) 🪟
@@ -27,4 +27,16 @@ Then
 - `export CC=clang `
 - `export CXX=clang++`
 - ` cmake .. -DCMAKE_BUILD_TYPE=Release` will have optimization or `cmake .. -DCMAKE_BUILD_TYPE=Debug `
+
+
+## Example
+
+```C++
+
+//suppose or function is f(x)=x*x+x and we need to find derivative at x=2   
+float x1=2;
+dual x(x1);
+dual y = x*x + x;
+std::cout << " y'(2)=:" << y.partial;
+```
 
