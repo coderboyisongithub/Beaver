@@ -30,7 +30,7 @@ Then
 
 
 ## Example
-
+This example will be compiled when the build is complete and program will compute the derivative and print the result.
 ```C++
 
 int main()
