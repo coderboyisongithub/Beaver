@@ -33,10 +33,17 @@ Then
 
 ```C++
 
-//suppose or function is f(x)=x*x+x and we need to find derivative at x=2   
-float x1=2;
-dual x(x1);
-dual y = x*x + x;
-std::cout << " y'(2)=:" << y.partial;
+int main()
+{
+    
+    // Example: derivative of sin(x)+cos(x)
+    dual x1(0.3f), x2(10.0f);
+    dual res =sin(x1) + cos(x1);
+    std::cout<<"at x=0.3" << "value:" << res.value << " partial:" << res.partial;
+    
+
+    return 0;
+}
+
 ```
 

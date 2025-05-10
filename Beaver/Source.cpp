@@ -2,17 +2,17 @@
 //
 
 #include <iostream>
-#include "Header.h"
+#include "dual.h"
+
+
+
 
 int main()
 {
     
-    // Example: Finding the partials of z = x * (x + y) + y * y at (x, y) = (2, 3)
-    // f(x)=x*x+x;
-    
-    float x1=2, x2=10;
-    dual a(x1), b(x2);
-    dual res = a * a * a + a*a;
+    // Example: derivative of sin(x)+cos(x)
+    dual x1(0.3f), x2(10.0f);
+    dual res =sin(x1) + cos(x1);
     std::cout << "value:" << res.value << " partial:" << res.partial;
     
 
