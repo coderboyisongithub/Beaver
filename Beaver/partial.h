@@ -1,0 +1,106 @@
+#pragma once
+#include <vector>
+#include <memory>
+#include "dual.h"
+
+
+
+struct node
+{
+	dual number;
+	std::vector<node> parents;
+	node(dual initial) :number(initial) {}
+	node() {};
+
+};
+
+
+struct mul_node:public node
+{
+	mul_node(node first, node second)
+	{
+		number = first.number * second.number;
+
+
+		printf("\n%f,%f", number.value, number.partial);
+
+
+	}
+	
+
+};
+
+
+struct add_node :public node
+{
+
+	add_node(node first, node second)
+	{
+		number = first.number + second.number;
+		// add parents;
+		parents.resize(2);
+		parents[0] = first;
+		parents[1] = second;
+
+
+		printf("\n%f,%f", number.value, number.partial);
+
+
+	}
+	
+};
+
+
+
+
+
+class variable
+{
+	
+	node op_node;
+
+	variable(node* op_node_other)
+	{
+		op_node.number = op_node_other->number;
+		op_node.parents = op_node_other->parents;
+
+	}
+public:
+	variable(float value)
+	{
+		op_node.number = dual(value);
+	};
+	
+	/*
+	variable(variable& other)
+	{
+
+	}
+	variable(variable&& other)
+	{
+		op_node.number = other.op_node.number;
+		op_node.parents = std::move(other.op_node.parents);
+		
+	}
+	*/
+
+
+	variable operator+(variable second)
+	{
+		//dual accum = op_node.number + second.op_node.number;
+		node* op = new add_node(this->op_node, second.op_node);
+		return std::move(variable(op));
+
+
+	}
+	void get()
+	{
+		printf("\n%f %f", op_node.number.value, op_node.number.partial);
+		for (node parent : op_node.parents)
+		{
+			printf("::%f\n", parent.number.value);
+		}
+
+	}
+
+};

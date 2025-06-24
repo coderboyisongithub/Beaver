@@ -1,23 +1,37 @@
 ﻿#pragma once
 #include <iostream>
-struct dual 
+
+namespace bv {}
+
+
+
+ struct dual 
 {
 	float value, partial;
+
+
+	dual()
+	{
+		value = 1.0;
+		partial = 1.0;
+	}
 	dual(float value_, float partial_ = 1.0)
 	{
 		value = value_;
 		partial = partial_;
 	}
-	dual operator+(dual other)
+
+	
+	 dual operator+(dual other)
 	{
 
 		return { value + other.value,	partial + other.partial };
 	}
-	dual operator-(dual other)
+	 dual operator-(dual other)
 	{
 		return { value - other.value,	partial - other.partial };
 	}
-	dual operator*(dual other)
+	 dual operator*(dual other)
 	{
 		return { value*other.value,	value*other.partial+other.value*partial};
 	}
@@ -43,10 +57,6 @@ dual exp(dual x)
 {
 	return dual{exp(x.value),exp(x.value)};
 }
-
-
-
-
 
 
 
