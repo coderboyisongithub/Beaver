@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include<typeinfo>
 #include "dual.h"
 
 
@@ -20,9 +21,13 @@ struct mul_node:public node
 	mul_node(node first, node second)
 	{
 		number = first.number * second.number;
+		// add parents;
+		parents.resize(2);
+		parents[0] = first;
+		parents[1] = second;
 
 
-		printf("\n%f,%f", number.value, number.partial);
+		//printf("\n%f,%f", number.value, number.partial);
 
 
 	}
@@ -43,7 +48,7 @@ struct add_node :public node
 		parents[1] = second;
 
 
-		printf("\n%f,%f", number.value, number.partial);
+		//printf("\n%f,%f", number.value, number.partial);
 
 
 	}
@@ -65,41 +70,51 @@ class variable
 		op_node.parents = op_node_other->parents;
 
 	}
+
+	void parent_(node n,int i)
+	{
+
+		if (n.parents.empty())
+			return;
+		else
+			for (node parent : n.parents)
+			{
+				printf("\n%d parent::(%f , %f) --> %s ",i, parent.number.value,parent.number.partial, typeid(parent).name());
+			
+				parent_(parent,++i);
+
+			}
+
+	}
+
 public:
 	variable(float value)
 	{
 		op_node.number = dual(value);
 	};
 	
-	/*
-	variable(variable& other)
-	{
-
-	}
-	variable(variable&& other)
-	{
-		op_node.number = other.op_node.number;
-		op_node.parents = std::move(other.op_node.parents);
-		
-	}
-	*/
-
-
 	variable operator+(variable second)
 	{
-		//dual accum = op_node.number + second.op_node.number;
 		node* op = new add_node(this->op_node, second.op_node);
+		return std::move(variable(op));
+
+	}
+	variable operator*(variable second)
+	{
+	
+		node* op = new mul_node(this->op_node, second.op_node);
 		return std::move(variable(op));
 
 
 	}
+
+
 	void get()
 	{
-		printf("\n%f %f", op_node.number.value, op_node.number.partial);
-		for (node parent : op_node.parents)
-		{
-			printf("::%f\n", parent.number.value);
-		}
+		int i = 1;
+		printf("\n%d root::(%f %f)",i, op_node.number.value, op_node.number.partial);
+		parent_(this->op_node,++i);
+	
 
 	}
 

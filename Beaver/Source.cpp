@@ -8,6 +8,9 @@
 
 
 
+
+/// stack...  1. LOOK ONCE MORE AT WHAT IS HAPPENING WHEN A OPERATOR ON VARIALB IS CALLED
+
 //construct computational graph in forward pass.
 //use association matrix.
 
@@ -75,28 +78,28 @@ std::function<void()> foo()
 
 int main()
 {
-    
-    dual v1(2.0), v2(5.0);
-
-    node x1, x2;
-    {
-        x1.number = v1;
-        x2.number = v2;
-
-    }
-
+ 
    // mul_node(x1, x2); //X1 x X2
    // add_node(x1, x2);/// x1 + x2
   //  add_node(mul_node(x1, x2), add_node(x1, x2));   //(X1 x X2) +  (x1 + x2)
     // then how to do so that this expression builds the nodes automatically, the answer is operator overloading on a class;
 
-    
    variable y1(2.0), y2(5.0);
+   dual x1(2.0), x2(5.0);
+   dual x3 = x1 * x2 + x2 * x2;
+   variable res = (y1 * y2) + (y2 * y2);
+  
+
+   res.get();
+   printf("\ndual::(%f , %f)", x3.value,x3.partial);
 
 
-    variable res=y1 + y2;
-    res.get();
+
+  
+
     // what res will hold here is the root node to the graph that is moved using moved operator during + operation.
+    // but there is one key issue to solve here that is memory management. in such a mess its hard to keep track of heap so will switch to smart pointers to mantain RAII.
+
     
 
 
