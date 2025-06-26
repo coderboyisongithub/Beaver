@@ -83,13 +83,17 @@ int main()
     //NEXT: RESOLVE FOR MEMORY SAFTEY . AND IMPLEMENT PARTIAL GRADIENT COMPUTATION;
 
    //reverse mode
-   variable y1(2.0), y2(5.0);
-   dual x1(2.0), x2(5.0);
-   dual x3 = x1 * x2 + x2 * x2;
-   variable res = (y1 * y2) + (y2 * y2);
-   res.get();
-   printf("\ndual::(%f , %f)", x3.value, x3.partial);
-   printf("\n gradient:.%.2f", res.grad());
+
+    while (1)
+    {
+        variable y1(2.0), y2(5.0);
+        dual x1(2.0), x2(5.0);
+        dual x3 = x1 * x2 + x2 * x2;
+        variable res = (y1 * y2) + (y2 * y2);
+    }
+   //res.get();
+   //printf("\ndual::(%f , %f)", x3.value, x3.partial);
+   //printf("\n gradient:.%.2f", res.grad());
   
 
    
