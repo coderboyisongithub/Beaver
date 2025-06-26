@@ -64,7 +64,7 @@ class variable
 	
 	node op_node;
 
-	variable(node* op_node_other)
+	variable(std::shared_ptr<node> op_node_other)
 	{
 		op_node.number = op_node_other->number;
 		op_node.parents = op_node_other->parents;
@@ -95,14 +95,15 @@ public:
 	
 	variable operator+(variable second)
 	{
-		node* op = new add_node(this->op_node, second.op_node);
+
+		std::shared_ptr<node> op = std::make_shared<add_node>(this->op_node, second.op_node);
 		return std::move(variable(op));
 
 	}
 	variable operator*(variable second)
 	{
-	
-		node* op = new mul_node(this->op_node, second.op_node);
+		
+		std::shared_ptr<node>op = std::make_shared<mul_node>(this->op_node, second.op_node);
 		return std::move(variable(op));
 
 
@@ -116,6 +117,11 @@ public:
 		parent_(this->op_node,++i);
 	
 
+	}
+	
+	float grad()
+	{
+		return op_node.number.partial;
 	}
 
 };
