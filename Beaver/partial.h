@@ -9,7 +9,7 @@
 struct node
 {
 	dual number;
-	std::vector<node> parents;
+	std::vector<std::shared_ptr<node>> parents;
 	node(dual initial) :number(initial) {}
 	node() {};
 
@@ -18,9 +18,9 @@ struct node
 
 struct mul_node:public node
 {
-	mul_node(node first, node second)
+	mul_node(std::shared_ptr<node> first, std::shared_ptr<node> second)
 	{
-		number = first.number * second.number;
+		number = first->number * second->number;
 		// add parents;
 		parents.resize(2);
 		parents[0] = first;
@@ -39,9 +39,9 @@ struct mul_node:public node
 struct add_node :public node
 {
 
-	add_node(node first, node second)
+	add_node(std::shared_ptr<node> first, std::shared_ptr<node> second)
 	{
-		number = first.number + second.number;
+		number = first->number + second->number;
 		// add parents;
 		parents.resize(2);
 		parents[0] = first;
@@ -62,24 +62,25 @@ struct add_node :public node
 class variable
 {
 	
-	node op_node;
+	std::shared_ptr<node> op_node;
 
 	variable(std::shared_ptr<node> op_node_other)
 	{
-		op_node.number = op_node_other->number;
-		op_node.parents = op_node_other->parents;
+		op_node = std::make_shared<node>(*op_node_other.get());
+		op_node->number = op_node_other->number;
+		op_node->parents = op_node_other->parents;
 
 	}
 
-	void parent_(node n,int i)
+	void parent_(std::shared_ptr<node> n,int i)
 	{
 
-		if (n.parents.empty())
+		if (n->parents.empty())
 			return;
 		else
-			for (node parent : n.parents)
+			for (std::shared_ptr<node> parent : n->parents)
 			{
-				printf("\n%d parent::(%f , %f) --> %s ",i, parent.number.value,parent.number.partial, typeid(parent).name());
+				printf("\n%d parent::(%f , %f) --> %s ",i, parent->number.value,parent->number.partial, typeid(parent).name());
 			
 				parent_(parent,++i);
 
@@ -90,7 +91,8 @@ class variable
 public:
 	variable(float value)
 	{
-		op_node.number = dual(value);
+		op_node = std::make_shared<node>(value);
+
 	};
 	
 	variable operator+(variable second)
@@ -113,7 +115,7 @@ public:
 	void get()
 	{
 		int i = 1;
-		printf("\n%d root::(%f %f)",i, op_node.number.value, op_node.number.partial);
+		printf("\n%d root::(%f %f)",i, op_node->number.value, op_node->number.partial);
 		parent_(this->op_node,++i);
 	
 
@@ -121,7 +123,7 @@ public:
 	
 	float grad()
 	{
-		return op_node.number.partial;
+		return op_node->number.partial;
 	}
 
 };

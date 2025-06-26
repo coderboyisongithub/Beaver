@@ -89,7 +89,6 @@ int main()
    variable res = (y1 * y2) + (y2 * y2);
    res.get();
    printf("\ndual::(%f , %f)", x3.value, x3.partial);
-
    printf("\n gradient:.%.2f", res.grad());
   
 
