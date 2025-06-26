@@ -13,6 +13,7 @@ struct node
 	node(dual initial) :number(initial) {}
 	node() {};
 
+
 };
 
 
@@ -25,11 +26,7 @@ struct mul_node:public node
 		parents.resize(2);
 		parents[0] = first;
 		parents[1] = second;
-
-
-		//printf("\n%f,%f", number.value, number.partial);
-
-
+	   
 	}
 	
 
@@ -46,9 +43,6 @@ struct add_node :public node
 		parents.resize(2);
 		parents[0] = first;
 		parents[1] = second;
-
-
-		//printf("\n%f,%f", number.value, number.partial);
 
 
 	}
@@ -72,19 +66,28 @@ class variable
 
 	}
 
-	void parent_(std::shared_ptr<node> n,int i)
+	void traverse(std::shared_ptr<node> n,int i, std::vector<std::shared_ptr<node>> &cache)
 	{
-
-		if (n->parents.empty())
+		if (std::find(cache.begin(), cache.end(), n) != cache.end()) //found
 			return;
-		else
-			for (std::shared_ptr<node> parent : n->parents)
-			{
-				printf("\n%d parent::(%f , %f) --> %s ",i, parent->number.value,parent->number.partial, typeid(parent).name());
+		
+		cache.push_back(n);
+		printf("\nlevel:%d Node:%f,%f",i, n->number.value, n->number.partial);
+		printf("\n  parents..");
+		
+		cache.push_back(n);
+		for (std::shared_ptr<node> parent : n->parents)
+		{
+			printf("\n  (%f,%f)", parent->number.value, parent->number.partial);
 			
-				parent_(parent,++i);
+		}
+		for (std::shared_ptr<node> parent : n->parents)
+		{
+			traverse(parent, i + 1,cache);
 
-			}
+		}
+
+		
 
 	}
 
@@ -112,16 +115,15 @@ public:
 	}
 
 
-	void get()
+	void about()
 	{
-		int i = 1;
-		printf("\n%d root::(%f %f)",i, op_node->number.value, op_node->number.partial);
-		parent_(this->op_node,++i);
-	
-
+		int count = 0;
+		std::vector<std::shared_ptr<node>> visited;
+		
+		traverse(this->op_node, count,visited);
 	}
 	
-	float grad()
+	float grad() 
 	{
 		return op_node->number.partial;
 	}

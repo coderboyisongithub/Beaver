@@ -77,21 +77,25 @@ std::function<void()> foo()
    // but there is one key issue to solve here that is memory management. in such a mess its hard to keep track of heap so will switch to smart pointers to mantain RAII.
 
 
+
+
 int main()
 {
 
-    //NEXT: RESOLVE FOR MEMORY SAFTEY . AND IMPLEMENT PARTIAL GRADIENT COMPUTATION;
 
-   //reverse mode
+   
+    //NEXT::How will it update? to do so it will be slightly different.
+    // graph will also record the function that will be called to operate the operation.
 
-    while (1)
-    {
-        variable y1(2.0), y2(5.0);
-        dual x1(2.0), x2(5.0);
-        dual x3 = x1 * x2 + x2 * x2;
-        variable res = (y1 * y2) + (y2 * y2);
-    }
-   //res.get();
+    
+        variable x1(2.0), x2(5.0);
+       
+       
+        variable res = (x1 * x2) + (x2 * x2);
+  
+
+
+     res.about();
    //printf("\ndual::(%f , %f)", x3.value, x3.partial);
    //printf("\n gradient:.%.2f", res.grad());
   
