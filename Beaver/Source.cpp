@@ -86,26 +86,30 @@ int main()
    
     //NEXT::How will it update? to do so it will be slightly different.
     // graph will also record the function that will be called to operate the operation.
+    // there is memory leak with DFS
 
     
-        variable x1(2.0), x2(5.0);
-       
-       
-        variable res = (x1 * x2) + (x2 * x2);
-  
+    variable x1(2.0), x2(5.0);
+    variable res = (x1 * x2) + (x2 * x2);
+
+    x1 = 3.0;
+   
+ 
+    res.toposort(x1);
+    
+
+    res.about();
+   
+    // res.derivate(x1);
+
+   //  res.about();
 
 
-     res.about();
+
+     
    //printf("\ndual::(%f , %f)", x3.value, x3.partial);
    //printf("\n gradient:.%.2f", res.grad());
-  
 
-   
-
-
-
-  
-  
   
 
     return 0;

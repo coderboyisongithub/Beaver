@@ -5,11 +5,13 @@
 #include "dual.h"
 
 
+//seed node will have no parents and no partials..
 
 struct node
 {
 	dual number;
 	std::vector<std::shared_ptr<node>> parents;
+	std::vector<float>dwrtx; //derivative w.r.t seed
 	node(dual initial) :number(initial) {}
 	node() {};
 
@@ -22,6 +24,9 @@ struct mul_node:public node
 	mul_node(std::shared_ptr<node> first, std::shared_ptr<node> second)
 	{
 		number = first->number * second->number;
+		dwrtx.resize(2);
+		dwrtx[0] = first->number.partial * second->number.value;
+		dwrtx[1] = second->number.partial * first->number.value;
 		// add parents;
 		parents.resize(2);
 		parents[0] = first;
@@ -39,6 +44,9 @@ struct add_node :public node
 	add_node(std::shared_ptr<node> first, std::shared_ptr<node> second)
 	{
 		number = first->number + second->number;
+		dwrtx.resize(2);
+		dwrtx[0] = first->number.partial;
+		dwrtx[1] = second->number.partial;
 		// add parents;
 		parents.resize(2);
 		parents[0] = first;
@@ -57,7 +65,7 @@ class variable
 {
 	
 	std::shared_ptr<node> op_node;
-
+	 
 	variable(std::shared_ptr<node> op_node_other)
 	{
 		op_node = std::make_shared<node>(*op_node_other.get());
@@ -68,6 +76,7 @@ class variable
 
 	void traverse(std::shared_ptr<node> n,int i, std::vector<std::shared_ptr<node>> &cache)
 	{
+		//BFS l 
 		if (std::find(cache.begin(), cache.end(), n) != cache.end()) //found
 			return;
 		
@@ -78,7 +87,11 @@ class variable
 		cache.push_back(n);
 		for (std::shared_ptr<node> parent : n->parents)
 		{
-			printf("\n  (%f,%f)", parent->number.value, parent->number.partial);
+			printf("\n  (%f,%f) ----", parent->number.value, parent->number.partial);
+			for (float derivatives : parent->dwrtx)
+			{
+				printf("\n    derivative w.r.t seed %f", derivatives);
+			}
 			
 		}
 		for (std::shared_ptr<node> parent : n->parents)
@@ -90,6 +103,8 @@ class variable
 		
 
 	}
+
+
 
 public:
 	variable(float value)
@@ -113,7 +128,63 @@ public:
 
 
 	}
+	
+ void DFS(std::shared_ptr<node>root, std::shared_ptr<node> key, std::vector<std::shared_ptr<node>>& path)
+	{
+	
+	
+	
+		 if(root->parents.empty()) //this is leaf node
+		 {
+			 if (root == key) //compare
+			 {
+				 path.push_back(root);
+				 return;
+			 }
+				 
+			 else
+			 return;
+		 }
+		 else
+		 {
+			 for (std::shared_ptr<node> parent : root->parents)
+			 {
+				 path.push_back(root);
+				 DFS(parent, key, path);
+			 }
+		 }
+	
 
+	}
+		void  toposort(variable var)
+	{
+
+
+		
+		// find a valid path using dfs from root node to n
+			std::shared_ptr<node> n=var.op_node;
+			std::vector<std::shared_ptr<node>> path;
+			DFS(this->op_node, n, path);
+		 for (std::shared_ptr<node> node : path)
+		 {
+			 std::cout <<"\npath:"<< node->number.value;
+
+		 }
+
+
+	}
+
+	void derivative() // compute derivative w.r.t seed node at once
+	{
+
+		
+			 // Find the path to given node.. using topological sorting...
+			 // computing partial derivative w.r.t parent node in the path
+			 // accumulating the partial derivative till end.
+		
+		//return std::move(grad);
+
+	}
 
 	void about()
 	{
@@ -121,6 +192,7 @@ public:
 		std::vector<std::shared_ptr<node>> visited;
 		
 		traverse(this->op_node, count,visited);
+		
 	}
 	
 	float grad() 

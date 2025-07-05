@@ -23,10 +23,9 @@ namespace bv {}
 
 	
 	 dual operator+(dual other)
-	{
-
+	 {
 		return { value + other.value,	partial + other.partial };
-	}
+	 }
 	 dual operator-(dual other)
 	{
 		return { value - other.value,	partial - other.partial };
