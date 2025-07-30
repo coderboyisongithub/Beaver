@@ -7,6 +7,8 @@
 #include "partial.h"
 
 
+#define __REF(X) printf("\n reference:%x ",&X)
+
 
 
 dual derivative(dual x,unsigned int order)
@@ -84,25 +86,17 @@ int main()
 
 
    
-    //NEXT::How will it update? to do so it will be slightly different.
-    // graph will also record the function that will be called to operate the operation.
-    // there is memory leak with DFS
+    //NEXT::DFS and gradient computation.
 
     
-    variable x1(2.0), x2(5.0);
-    variable res = (x1 * x2) + (x2 * x2);
+    variable x1(2.0), x2(5.0), x43(5.0);
+    variable res = (x1 * x2) + (x2)+x1;
 
-    x1 = 3.0;
-   
- 
+  //   __REF(x1);
     res.toposort(x1);
-    
-
-    res.about();
-   
     // res.derivate(x1);
 
-   //  res.about();
+   //res.about();
 
 
 

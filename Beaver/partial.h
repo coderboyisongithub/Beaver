@@ -7,6 +7,8 @@
 
 //seed node will have no parents and no partials..
 
+
+
 struct node
 {
 	dual number;
@@ -17,7 +19,7 @@ struct node
 
 
 };
-
+typedef  std::shared_ptr<node> nodeptr;
 
 struct mul_node:public node
 {
@@ -81,7 +83,7 @@ class variable
 			return;
 		
 		cache.push_back(n);
-		printf("\nlevel:%d Node:%f,%f",i, n->number.value, n->number.partial);
+		printf("\nlevel:%d Node:%f,%f  at  %x",i, n->number.value, n->number.partial,n.get());
 		printf("\n  parents..");
 		
 		cache.push_back(n);
@@ -101,6 +103,16 @@ class variable
 		}
 
 		
+
+	}
+
+	//check if this node is visited
+	bool visited(std::vector<std::shared_ptr<node>> cache, std::shared_ptr<node> thisnode)
+	{
+		for (std::shared_ptr<node> n : cache)
+		{
+
+		}
 
 	}
 
@@ -128,48 +140,84 @@ public:
 
 
 	}
-	
- void DFS(std::shared_ptr<node>root, std::shared_ptr<node> key, std::vector<std::shared_ptr<node>>& path)
+
+
+	void visit(std::shared_ptr<node>root, std::shared_ptr<node>& key, std::vector<std::shared_ptr<node>>& path)
 	{
-	
-	
-	
-		 if(root->parents.empty()) //this is leaf node
-		 {
-			 if (root == key) //compare
-			 {
-				 path.push_back(root);
-				 return;
-			 }
-				 
-			 else
-			 return;
-		 }
-		 else
-		 {
-			 for (std::shared_ptr<node> parent : root->parents)
-			 {
-				 path.push_back(root);
-				 DFS(parent, key, path);
-			 }
-		 }
-	
 
 	}
-		void  toposort(variable var)
+	
+	// Depth first search for all valid path to seed variable 'key'
+	void DFS_generatevalidPath(std::shared_ptr<node>&root, std::shared_ptr<node>& seedVariable, std::vector<std::vector<std::shared_ptr<node>>>& validpath)
 	{
+	
 
+		std::vector<nodeptr> stack;
+		std::vector<nodeptr>path_root2current;
+		
+		stack.push_back(root);
 
 		
-		// find a valid path using dfs from root node to n
-			std::shared_ptr<node> n=var.op_node;
-			std::vector<std::shared_ptr<node>> path;
-			DFS(this->op_node, n, path);
-		 for (std::shared_ptr<node> node : path)
-		 {
-			 std::cout <<"\npath:"<< node->number.value;
 
-		 }
+		while (!stack.empty())
+		{
+
+			nodeptr& current = stack.back();
+			path_root2current.push_back(stack.back()); stack.pop_back();
+
+
+			if (current->parents.empty())
+			{
+				if (seedVariable.get() == current.get())
+				{
+					validpath.resize(validpath.size() + 1);
+					validpath[validpath.size() - 1] = path_root2current;
+				}
+				path_root2current.pop_back();
+			}
+
+			else
+			{
+				
+				for (nodeptr parent : current->parents)
+				{
+
+					stack.push_back(parent);
+
+				}
+			}
+
+		}
+		return;
+			
+	}
+
+
+	//Topological sorting based on Depth-first search.
+	void  toposort(variable& var)
+	{
+		std::vector<std::vector<std::shared_ptr<node>>> path;
+		
+
+
+
+		DFS_generatevalidPath(op_node, var.op_node, path);
+			if (path.empty())
+				std::cerr << "no path";
+			printf("\n seed node %f", var.op_node->number.value);
+
+			for (auto validPath : path)
+			{
+
+				printf("\nValid path:");
+				for(auto node:validPath)
+				std::cout<<node->number.value<<",";
+			}
+
+			
+
+			//abort();
+			 
 
 
 	}
