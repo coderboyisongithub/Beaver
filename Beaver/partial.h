@@ -117,7 +117,6 @@ class variable
 	}
 
 
-
 public:
 	variable(float value)
 	{
@@ -148,84 +147,56 @@ public:
 	}
 	
 	// Depth first search for all valid path to seed variable 'key'
-	void DFS_generatevalidPath(std::shared_ptr<node>&root, std::shared_ptr<node>& seedVariable, std::vector<std::vector<std::shared_ptr<node>>>& validpath)
+	void DFS_generatevalidPath(std::shared_ptr<node>&root,
+		std::shared_ptr<node>& seedVariable, 
+		std::vector<std::shared_ptr<node>>& path, 
+		std::vector<std::vector<std::shared_ptr<node>>>&validPath)
 	{
 	
-
-		std::vector<nodeptr> stack;
-		std::vector<nodeptr>path_root2current;
 		
-		stack.push_back(root);
-
-		
-
-		while (!stack.empty())
+	
+		path.push_back(root);
+		if (root->parents.empty())
 		{
-
-			nodeptr& current = stack.back();
-			path_root2current.push_back(stack.back()); stack.pop_back();
-
-
-			if (current->parents.empty())
+			if (root.get() == seedVariable.get())
 			{
-				if (seedVariable.get() == current.get())
-				{
-					validpath.resize(validpath.size() + 1);
-					validpath[validpath.size() - 1] = path_root2current;
-				}
-				path_root2current.pop_back();
+				int s = validPath.size();
+				validPath.resize(++s);
+				validPath[s - 1] = path;
 			}
-
-			else
-			{
-				
-				for (nodeptr parent : current->parents)
-				{
-
-					stack.push_back(parent);
-
-				}
-			}
-
+			
+			return;
 		}
-		return;
+		else
+		{
+			for (auto parent : root->parents)
+			{
+				DFS_generatevalidPath(parent, seedVariable, path, validPath);
+				path.pop_back();
+		   }
+		}
+
+
+		
 			
 	}
 
 
 	//Topological sorting based on Depth-first search.
-	void  toposort(variable& var)
+	std::vector<std::vector<std::shared_ptr<node>>>   toposort(variable& var)
 	{
-		std::vector<std::vector<std::shared_ptr<node>>> path;
+	std::vector<std::shared_ptr<node>> pathlist;
+	std::vector<std::vector<std::shared_ptr<node>>> validPath;
+		DFS_generatevalidPath(op_node, var.op_node, pathlist, validPath);
+	return (validPath);
 		
-
-
-
-		DFS_generatevalidPath(op_node, var.op_node, path);
-			if (path.empty())
-				std::cerr << "no path";
-			printf("\n seed node %f", var.op_node->number.value);
-
-			for (auto validPath : path)
-			{
-
-				printf("\nValid path:");
-				for(auto node:validPath)
-				std::cout<<node->number.value<<",";
-			}
-
-			
-
-			//abort();
-			 
-
-
 	}
 
-	void derivative() // compute derivative w.r.t seed node at once
+	variable differentiate(variable &seed) // compute derivative w.r.t seed node at once
 	{
+		abort();
 
-		
+
 			 // Find the path to given node.. using topological sorting...
 			 // computing partial derivative w.r.t parent node in the path
 			 // accumulating the partial derivative till end.
@@ -241,6 +212,15 @@ public:
 		
 		traverse(this->op_node, count,visited);
 		
+	}
+
+	float value()
+	{
+		return  op_node->number.value;
+	}
+	float partial()
+	{
+		return op_node->number.partial;
 	}
 	
 	float grad() 
