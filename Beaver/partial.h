@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <map>
 #include <memory>
 #include<typeinfo>
 #include "dual.h"
@@ -13,7 +14,8 @@ struct node
 {
 	dual number;
 	std::vector<std::shared_ptr<node>> parents;
-	std::vector<float>dwrtx; //derivative w.r.t seed
+	//std::vector<float>dwrtx; 
+	std::map<node*, float>dwrt_parent;//derivative w.r.t parent's indexed by parent's pointer address
 	node(dual initial) :number(initial) {}
 	node() {};
 
@@ -26,14 +28,17 @@ struct mul_node:public node
 	mul_node(std::shared_ptr<node> first, std::shared_ptr<node> second)
 	{
 		number = first->number * second->number;
-		dwrtx.resize(2);
-		dwrtx[0] = first->number.partial * second->number.value;
-		dwrtx[1] = second->number.partial * first->number.value;
+		//dwrtx.resize(2);
+		///dwrtx[0] = first->number.partial * second->number.value;
+		//dwrtx[1] = second->number.partial * first->number.value;
+		dwrt_parent.insert({ first.get(),second->number.value });
+		dwrt_parent.insert({ second.get(),first->number.value  });
 		// add parents;
 		parents.resize(2);
 		parents[0] = first;
 		parents[1] = second;
 	   
+		
 	}
 	
 
@@ -45,15 +50,19 @@ struct add_node :public node
 
 	add_node(std::shared_ptr<node> first, std::shared_ptr<node> second)
 	{
+
 		number = first->number + second->number;
-		dwrtx.resize(2);
-		dwrtx[0] = first->number.partial;
-		dwrtx[1] = second->number.partial;
+		//dwrtx.resize(2);
+		//dwrtx[0] = first->number.partial;
+		//dwrtx[1] = second->number.partial;
+		dwrt_parent.insert({ first.get(),1.0f });
+		dwrt_parent.insert({ second.get(),1.0f });
+		
 		// add parents;
 		parents.resize(2);
 		parents[0] = first;
 		parents[1] = second;
-
+	   
 
 	}
 	
@@ -90,9 +99,9 @@ class variable
 		for (std::shared_ptr<node> parent : n->parents)
 		{
 			printf("\n  (%f,%f) ----", parent->number.value, parent->number.partial);
-			for (float derivatives : parent->dwrtx)
+			for (auto& derivatives : parent->dwrt_parent)
 			{
-				printf("\n    derivative w.r.t seed %f", derivatives);
+				printf("\n    derivative w.r.t parents %f", derivatives.second);
 			}
 			
 		}
@@ -105,17 +114,6 @@ class variable
 		
 
 	}
-
-	//check if this node is visited
-	bool visited(std::vector<std::shared_ptr<node>> cache, std::shared_ptr<node> thisnode)
-	{
-		for (std::shared_ptr<node> n : cache)
-		{
-
-		}
-
-	}
-
 
 public:
 	variable(float value)
@@ -139,13 +137,6 @@ public:
 
 
 	}
-
-
-	void visit(std::shared_ptr<node>root, std::shared_ptr<node>& key, std::vector<std::shared_ptr<node>>& path)
-	{
-
-	}
-	
 	// Depth first search for all valid path to seed variable 'key'
 	void DFS_generatevalidPath(std::shared_ptr<node>&root,
 		std::shared_ptr<node>& seedVariable, 
@@ -177,33 +168,69 @@ public:
 		}
 
 
+
 		
 			
 	}
 
 
 	//Topological sorting based on Depth-first search.
-	std::vector<std::vector<std::shared_ptr<node>>>   toposort(variable& var)
+	std::vector<std::vector<nodeptr>>toposort(variable& var)
 	{
 	std::vector<std::shared_ptr<node>> pathlist;
-	std::vector<std::vector<std::shared_ptr<node>>> validPath;
+	std::vector<std::vector<nodeptr>> validPath;
 		DFS_generatevalidPath(op_node, var.op_node, pathlist, validPath);
+
+		for (auto& reversed_list : validPath)
+		{
+		std::reverse(reversed_list.begin(), reversed_list.end());
+	
+		}
 	return (validPath);
 		
 	}
 
-	variable differentiate(variable &seed) // compute derivative w.r.t seed node at once
+variable differentiate(variable& seed) // compute derivative w.r.t seed node at once
+{
+
+
+	// Find the path to given node.. using topological sorting...
+	// computing partial derivative w.r.t parent node in the path
+	// accumulating the partial derivative till end.
+	std::vector<std::vector<nodeptr>> validpath = toposort(seed);
+
+	if (validpath.empty())
 	{
-		abort();
+		variable ZeroDerivative(0.0);
+		ZeroDerivative.op_node->number.partial = 0.0;
+		return ZeroDerivative;
+	}
+	else
+	{
+
+		float partial_derivative = 0.0f;
+
+		for (auto& path : validpath)
+		{
+			float accumulate = 1.0f;
+			for (size_t index = path.size()-1; index >=1; index--)
+			{
+				nodeptr node = path[index];
+				nodeptr validParent = path[index - 1];
+				accumulate *= node->dwrt_parent[validParent.get()];
+			}
+			partial_derivative += accumulate;
+	 }
+		return (variable(partial_derivative));
 
 
-			 // Find the path to given node.. using topological sorting...
-			 // computing partial derivative w.r.t parent node in the path
-			 // accumulating the partial derivative till end.
-		
 		//return std::move(grad);
 
 	}
+}
+
+
+
 
 	void about()
 	{

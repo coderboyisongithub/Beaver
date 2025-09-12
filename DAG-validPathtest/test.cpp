@@ -26,9 +26,9 @@ TEST(findValidPath1_test, DAG_test)
     bool foundx1, foundx2;
     std::vector<std::vector<nodeptr>> validPath=res.toposort(x2);
     std::vector<std::vector<float>> expected_paths = {
-     {35,25, 5},      // path 1
-     {35,25, 5},          // path 2  
-     {35,10,2},  // path 3
+     {5,25, 35},      // path 1
+     {5,25, 35},          // path 2  
+     {2,10,35},  // path 3
         // Add more expected paths as needed
     };
 
