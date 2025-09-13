@@ -7,15 +7,18 @@ Beaver is a library that is capable of computing derivative of given expression 
 ## Build instruction.
 ### windows (x64) 🪟
 <details>
+    
 - `git clone https://github.com/coderboyisongithub/Beaver.git`
 - ` cd Beaver`
 - ` mkdir build; cd build`
 - ` cmake .. -DCMAKE_BUILD_TYPE=Release` will have optimization or `cmake .. -DCMAKE_BUILD_TYPE=Debug `
+    
 </details>
 
 ### Linux (x64/clang compiler only) 💽
 
 <details>
+    
 Getting your system ready first.
 ```bash
 sudo apt install cmake zip wget curl ninja-build build-essential pkg-config autoconf
