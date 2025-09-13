@@ -6,15 +6,16 @@ Automatic Differentiation system. (brewing...🍵)
 Beaver is a library that is capable of computing derivative of given expression on fly automatically. 
 ## Build instruction.
 ### windows (x64) 🪟
-
+<details>
 - `git clone https://github.com/coderboyisongithub/Beaver.git`
 - ` cd Beaver`
 - ` mkdir build; cd build`
 - ` cmake .. -DCMAKE_BUILD_TYPE=Release` will have optimization or `cmake .. -DCMAKE_BUILD_TYPE=Debug `
+</details>
 
 ### Linux (x64/clang compiler only) 💽
 
-
+<details>
 Getting your system ready first.
 ```bash
 sudo apt install cmake zip wget curl ninja-build build-essential pkg-config autoconf
@@ -31,7 +32,7 @@ Then
 - `export CXX=clang++`
 - ` cmake .. -DCMAKE_BUILD_TYPE=Release` will have optimization or `cmake .. -DCMAKE_BUILD_TYPE=Debug `
 
-
+</details>
 
 ## Example
 This example will be compiled when the build is complete and program will compute the derivative and print the result.
