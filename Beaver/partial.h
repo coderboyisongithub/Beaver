@@ -6,6 +6,7 @@
 #include "dual.h"
 
 
+
 //seed node will have no parents and no partials..
 
 
@@ -72,11 +73,34 @@ struct add_node :public node
 
 
 
+
+/*
+the overload function will create a variable with log node here then during dag construction variable variable overload will consr
+uct the graph
+*/
+struct log_node :public node
+{
+	log_node(std::shared_ptr<node> first)
+	{
+
+		number = log(first->number);
+		dwrt_parent.insert({ first.get(),number.partial });
+		// add parents;
+		parents.resize(1);
+		parents[0] = first;
+
+	}
+};
+
+
+
+
+
 class variable
 {
-	
+	friend variable log(variable);
 	std::shared_ptr<node> op_node;
-	 
+
 	variable(std::shared_ptr<node> op_node_other)
 	{
 		op_node = std::make_shared<node>(*op_node_other.get());
@@ -85,16 +109,16 @@ class variable
 
 	}
 
-	void traverse(std::shared_ptr<node> n,int i, std::vector<std::shared_ptr<node>> &cache)
+	void traverse(std::shared_ptr<node> n, int i, std::vector<std::shared_ptr<node>>& cache)
 	{
 		//BFS l 
 		if (std::find(cache.begin(), cache.end(), n) != cache.end()) //found
 			return;
-		
+
 		cache.push_back(n);
-		printf("\nlevel:%d Node:%f,%f  at  %x",i, n->number.value, n->number.partial,n.get());
+		printf("\nlevel:%d Node:%f,%f  at  %x", i, n->number.value, n->number.partial, n.get());
 		printf("\n  parents..");
-		
+
 		cache.push_back(n);
 		for (std::shared_ptr<node> parent : n->parents)
 		{
@@ -103,15 +127,15 @@ class variable
 			{
 				printf("\n    derivative w.r.t parents %f", derivatives.second);
 			}
-			
+
 		}
 		for (std::shared_ptr<node> parent : n->parents)
 		{
-			traverse(parent, i + 1,cache);
+			traverse(parent, i + 1, cache);
 
 		}
 
-		
+
 
 	}
 
@@ -121,7 +145,7 @@ public:
 		op_node = std::make_shared<node>(value);
 
 	};
-	
+
 	variable operator+(variable second)
 	{
 
@@ -131,21 +155,22 @@ public:
 	}
 	variable operator*(variable second)
 	{
-		
+
 		std::shared_ptr<node>op = std::make_shared<mul_node>(this->op_node, second.op_node);
 		return std::move(variable(op));
 
 
 	}
+
 	// Depth first search for all valid path to seed variable 'key'
-	void DFS_generatevalidPath(std::shared_ptr<node>&root,
-		std::shared_ptr<node>& seedVariable, 
-		std::vector<std::shared_ptr<node>>& path, 
-		std::vector<std::vector<std::shared_ptr<node>>>&validPath)
+	void DFS_generatevalidPath(std::shared_ptr<node>& root,
+		std::shared_ptr<node>& seedVariable,
+		std::vector<std::shared_ptr<node>>& path,
+		std::vector<std::vector<std::shared_ptr<node>>>& validPath)
 	{
-	
-		
-	
+
+
+
 		path.push_back(root);
 		if (root->parents.empty())
 		{
@@ -155,7 +180,7 @@ public:
 				validPath.resize(++s);
 				validPath[s - 1] = path;
 			}
-			
+
 			return;
 		}
 		else
@@ -164,81 +189,77 @@ public:
 			{
 				DFS_generatevalidPath(parent, seedVariable, path, validPath);
 				path.pop_back();
-		   }
+			}
 		}
 
 
 
-		
-			
+
+
 	}
 
 
 	//Topological sorting based on Depth-first search.
 	std::vector<std::vector<nodeptr>>toposort(variable& var)
 	{
-	std::vector<std::shared_ptr<node>> pathlist;
-	std::vector<std::vector<nodeptr>> validPath;
+		std::vector<std::shared_ptr<node>> pathlist;
+		std::vector<std::vector<nodeptr>> validPath;
 		DFS_generatevalidPath(op_node, var.op_node, pathlist, validPath);
 
 		for (auto& reversed_list : validPath)
 		{
-		std::reverse(reversed_list.begin(), reversed_list.end());
-	
+			std::reverse(reversed_list.begin(), reversed_list.end());
+
 		}
-	return (validPath);
-		
+		return (validPath);
+
 	}
 
-variable differentiate(variable& seed) // compute derivative w.r.t seed node at once
-{
-
-
-	// Find the path to given node.. using topological sorting...
-	// computing partial derivative w.r.t parent node in the path
-	// accumulating the partial derivative till end.
-	std::vector<std::vector<nodeptr>> validpath = toposort(seed);
-
-	if (validpath.empty())
-	{
-		variable ZeroDerivative(0.0);
-		ZeroDerivative.op_node->number.partial = 0.0;
-		return ZeroDerivative;
-	}
-	else
+	variable differentiate(variable& seed) // compute derivative w.r.t seed node at once
 	{
 
-		float partial_derivative = 0.0f;
 
-		for (auto& path : validpath)
+		// Find the path to given node.. using topological sorting...
+		// computing partial derivative w.r.t parent node in the path
+		// accumulating the partial derivative till end.
+		std::vector<std::vector<nodeptr>> validpath = toposort(seed);
+
+		if (validpath.empty())
 		{
-			float accumulate = 1.0f;
-			for (size_t index = path.size()-1; index >=1; index--)
+			variable ZeroDerivative(0.0);
+			ZeroDerivative.op_node->number.partial = 0.0;
+			return ZeroDerivative;
+		}
+		else
+		{
+
+			float partial_derivative = 0.0f;
+
+			for (auto& path : validpath)
 			{
-				nodeptr node = path[index];
-				nodeptr validParent = path[index - 1];
-				accumulate *= node->dwrt_parent[validParent.get()];
+				float accumulate = 1.0f;
+				for (size_t index = path.size() - 1; index >= 1; index--)
+				{
+					nodeptr node = path[index];
+					nodeptr validParent = path[index - 1];
+					accumulate *= node->dwrt_parent[validParent.get()];
+				}
+				partial_derivative += accumulate;
 			}
-			partial_derivative += accumulate;
-	 }
-		return (variable(partial_derivative));
+			return (variable(partial_derivative));
 
 
-		//return std::move(grad);
+			//return std::move(grad);
 
+		}
 	}
-}
-
-
-
-
 	void about()
 	{
 		int count = 0;
 		std::vector<std::shared_ptr<node>> visited;
-		
-		traverse(this->op_node, count,visited);
-		
+
+		traverse(this->op_node, count, visited);
+
 	}
 
 	float value()
@@ -249,10 +270,17 @@ variable differentiate(variable& seed) // compute derivative w.r.t seed node at 
 	{
 		return op_node->number.partial;
 	}
-	
-	float grad() 
+
+	float grad()
 	{
 		return op_node->number.partial;
 	}
 
 };
+
+variable log(variable x)
+{
+	log_node opnode(x.op_node);
+	std::shared_ptr<node> op = std::make_shared<log_node>(opnode);
+	return variable(op);
+}

@@ -15,26 +15,31 @@ int main()
 
   
     std::vector<std::vector<nodeptr>> pathlist;
-    std::chrono::high_resolution_clock clock;
-   
-    std::chrono::time_point start = timeIt(clock);
+    int count = 0;
+    
+        std::chrono::high_resolution_clock clock;
 
-    // Example: obtain partial derivative for (x1*x2)+(x2*x3)
-    variable x1(2.00), x2(5.0), x3(3.35);
-    variable expression = (x1 * x2) + (x2 * x3);
-    variable dx1 = expression.differentiate(x1);
-    variable dx2 = expression.differentiate(x2);
-    variable dx3 = expression.differentiate(x3);
+        std::chrono::time_point start = timeIt(clock);
 
-    variable gradient = dx1 + dx2 + dx3;
+        // Example: obtain partial derivative for (x1*x2)+(x2*x3)
+        variable x1(2.00), x2(5.0), x3(3.50f), x4(3.213);
+        variable expression = (x1 * x2)+(x2*x3)+log(x3);
+        while (count != 100) {
+        variable dx1 = expression.differentiate(x1);
+        variable dx2 = expression.differentiate(x2);
+        variable dx3 = expression.differentiate(x3);
 
-
-  std::chrono::time_point stop = timeIt(clock);
-
-  std::cout << "sum of partial:" << gradient.value() << " And actual gradient:" << expression.partial();
+        variable gradient = dx1 + dx2 + dx3;
 
 
-    std::cout<<"\n Runtime(mIcroSec): "<<(std::chrono::duration_cast<std::chrono::microseconds>(stop - start)).count();
+        count++;
+        }
+
+        std::chrono::time_point stop = timeIt(clock);
+
+        // printf("\n sum of partial:%f And actual sum of gradients: %f", gradient.value(), expression.partial());
+        std::cout << "\n Runtime(mIcroSec): " << (std::chrono::duration_cast<std::chrono::microseconds>(stop - start)).count();
+    
     return 0;
 }
 
