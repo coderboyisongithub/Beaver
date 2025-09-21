@@ -24,7 +24,7 @@ struct node
 };
 typedef  std::shared_ptr<node> nodeptr;
 
-struct mul_node:public node
+struct mul_node :public node
 {
 	mul_node(std::shared_ptr<node> first, std::shared_ptr<node> second)
 	{
@@ -33,15 +33,15 @@ struct mul_node:public node
 		///dwrtx[0] = first->number.partial * second->number.value;
 		//dwrtx[1] = second->number.partial * first->number.value;
 		dwrt_parent.insert({ first.get(),second->number.value });
-		dwrt_parent.insert({ second.get(),first->number.value  });
+		dwrt_parent.insert({ second.get(),first->number.value });
 		// add parents;
 		parents.resize(2);
 		parents[0] = first;
 		parents[1] = second;
-	   
-		
+
+
 	}
-	
+
 
 };
 
@@ -58,15 +58,15 @@ struct add_node :public node
 		//dwrtx[1] = second->number.partial;
 		dwrt_parent.insert({ first.get(),1.0f });
 		dwrt_parent.insert({ second.get(),1.0f });
-		
+
 		// add parents;
 		parents.resize(2);
 		parents[0] = first;
 		parents[1] = second;
-	   
+
 
 	}
-	
+
 };
 
 
@@ -91,23 +91,52 @@ struct log_node :public node
 
 	}
 };
+struct exp_node :public node
+{
+	exp_node(const std::shared_ptr<node>& first)
+	{
 
+		number = exp(first->number);
+		dwrt_parent.insert({ first.get(),number.partial });
+		// add parents;
+		parents.resize(1);
+		parents[0] = first;
 
+	}
+};
+struct sin_node :public node
+{
+	sin_node(const std::shared_ptr<node>& first)
+	{
 
+		number = sin(first->number);
+		dwrt_parent.insert({ first.get(),number.partial });
+		// add parents;
+		parents.resize(1);
+		parents[0] = first;
 
+	}
+};
+struct cos_node :public node
+{
+	cos_node(const std::shared_ptr<node>& first)
+	{
+
+		number = cos(first->number);
+		dwrt_parent.insert({ first.get(),number.partial });
+		// add parents;
+		parents.resize(1);
+		parents[0] = first;
+
+	}
+};
 
 class variable
 {
-	friend variable log(variable);
+	//friend variable log(variable);  // instead of making friend I am uising constant reference to op_node to ensure
+	// reciever dont modify the node inside variable.
 	std::shared_ptr<node> op_node;
 
-	variable(std::shared_ptr<node> op_node_other)
-	{
-		op_node = std::make_shared<node>(*op_node_other.get());
-		op_node->number = op_node_other->number;
-		op_node->parents = op_node_other->parents;
-
-	}
 
 	void traverse(std::shared_ptr<node> n, int i, std::vector<std::shared_ptr<node>>& cache)
 	{
@@ -146,6 +175,19 @@ public:
 
 	};
 
+	variable(std::shared_ptr<node> op_node_other)
+	{
+		op_node = std::make_shared<node>(*op_node_other.get());
+		op_node->number = op_node_other->number;
+		op_node->parents = op_node_other->parents;
+
+	}
+	//This will return a constant reference to operation node variable objects hold
+	const std::shared_ptr<node>& operator()()
+	{
+		const std::shared_ptr<node>& ret = op_node;
+		return ret;
+	}
 	variable operator+(variable second)
 	{
 
@@ -280,7 +322,27 @@ public:
 
 variable log(variable x)
 {
-	log_node opnode(x.op_node);
+	log_node opnode(x());
 	std::shared_ptr<node> op = std::make_shared<log_node>(opnode);
+	return variable(op);
+}
+
+variable exp(variable x)
+{
+	exp_node opnode(x());
+	std::shared_ptr<node> op = std::make_shared<exp_node>(opnode);
+	return variable(op);
+}
+
+variable sin(variable x)
+{
+	sin_node opnode(x());
+	std::shared_ptr<node> op = std::make_shared<sin_node>(opnode);
+	return variable(op);
+}
+variable cos(variable x)
+{
+	cos_node opnode(x());
+	std::shared_ptr<node> op = std::make_shared<cos_node>(opnode);
 	return variable(op);
 }
