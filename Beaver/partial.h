@@ -131,7 +131,7 @@ struct cos_node :public node
 	}
 };
 
-class variable
+class variable final
 {
 	//friend variable log(variable);  // instead of making friend I am uising constant reference to op_node to ensure
 	// reciever dont modify the node inside variable.
@@ -183,7 +183,7 @@ public:
 
 	}
 	//This will return a constant reference to operation node variable objects hold
-	const std::shared_ptr<node>& operator()()
+	const std::shared_ptr<node>& operator()() const
 	{
 		const std::shared_ptr<node>& ret = op_node;
 		return ret;
@@ -208,7 +208,7 @@ public:
 	void DFS_generatevalidPath(std::shared_ptr<node>& root,
 		std::shared_ptr<node>& seedVariable,
 		std::vector<std::shared_ptr<node>>& path,
-		std::vector<std::vector<std::shared_ptr<node>>>& validPath)
+		std::vector<std::vector<std::shared_ptr<node>>>& validPath) const
 	{
 
 
@@ -295,7 +295,7 @@ public:
 
 		}
 	}
-	void about()
+	void about() 
 	{
 		int count = 0;
 		std::vector<std::shared_ptr<node>> visited;
@@ -304,16 +304,16 @@ public:
 
 	}
 
-	float value()
+	float value() const
 	{
 		return  op_node->number.value;
 	}
-	float partial()
+	float partial() const
 	{
 		return op_node->number.partial;
 	}
 
-	float grad()
+	float grad() const
 	{
 		return op_node->number.partial;
 	}

@@ -22,32 +22,33 @@ else()
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-    FetchContent_MakeAvailable(googletest)
+   
 
-endif()
-
-
-# Set default build type to Release if not specified
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
-    set(CMAKE_CXX_FLAGS_RELEASE O2)
 endif()
 
 # Add the executable
 add_executable(Beaver
     Beaver/Source.cpp
 )
-
-target_compile_options(Beaver PRIVATE -w)
-
 target_include_directories(Beaver PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Beaver
 )
 
 
+# Apply compile options based on build type
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_compile_options(Beaver PRIVATE -O3)
+    message("SELECTING RELEASE MODE BUILD/COMPILE")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_options(Beaver PRIVATE -DDEBUG)
+    message("SELECTING DEBUG MODE BUILD/COMPILE")
+endif()
+
+
 
 # Google test
 enable_testing()
+FetchContent_MakeAvailable(googletest)
 add_executable(DAG_ValidpathTest DAG-validPathtest/test.cpp
     )
 target_link_libraries(

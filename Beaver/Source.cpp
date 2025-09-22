@@ -21,12 +21,12 @@ int main()
 	// Example: obtain partial derivative for (x1*x2)+(x2*x3)
 	variable x1(2.00), x2(5.0), x3(3.50f), x4(3.213);
 
-	variable expression = sin(x1) + cos(x2);
+	variable expression = x1 + x2 + (x2 * x3);
 
 	variable dx1 = expression.differentiate(x1);
 	variable dx2 = expression.differentiate(x2);
-
-	variable gradient = dx1 + dx2;
+	variable dx3 = expression.differentiate(x3);
+	variable gradient = dx1 + dx2 + dx3;
 
 
 	std::chrono::time_point stop = timeIt(clock);
