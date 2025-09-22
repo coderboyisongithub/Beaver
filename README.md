@@ -29,11 +29,13 @@ sudo apt install clang libc++-dev libc++abi-dev
 Then
 
 - `git clone https://github.com/coderboyisongithub/Beaver.git`
-- ` cd Beaver`
-- ` mkdir build; cd build`
-- `export CC=clang `
-- `export CXX=clang++`
-- ` cmake .. -DCMAKE_BUILD_TYPE=Release` will have optimization or `cmake .. -DCMAKE_BUILD_TYPE=Debug `
+```
+cd Beaver
+mkdir build; cd build
+export CC=clang 
+export CXX=clang++
+cmake .. -DCMAKE_BUILD_TYPE=Release` will have optimization or `cmake .. -DCMAKE_BUILD_TYPE=Debug
+```
 
 </details>
 
