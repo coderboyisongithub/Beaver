@@ -1,7 +1,7 @@
 
 
 # Beaver
-Automatic Differentiation system. (brewed🍵,ready to serve)
+Automatic Differentiation system. (brewed🍵✅,ready to serve)
 
 Beaver is a library that is capable of computing derivative of given expression on fly automatically. 
 ## Build instruction.
