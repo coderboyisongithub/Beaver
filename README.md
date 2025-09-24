@@ -34,8 +34,11 @@ cd Beaver
 mkdir build; cd build
 export CC=clang 
 export CXX=clang++
-cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release` will have optimization or `cmake .. -DCMAKE_BUILD_TYPE=Debug
+cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Release
 ```
+
+Or for debugging mode `cmake .. -DCMAKE_BUILD_TYPE=Debug`
+
 
 </details>
 
