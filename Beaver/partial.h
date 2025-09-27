@@ -26,6 +26,7 @@ typedef  std::shared_ptr<node> nodeptr;
 
 struct mul_node :public node
 {
+
 	mul_node(std::shared_ptr<node> first, std::shared_ptr<node> second)
 	{
 		number = first->number * second->number;
@@ -46,6 +47,22 @@ struct mul_node :public node
 };
 
 
+struct sub_node :public node
+{
+	sub_node(std::shared_ptr<node> first, std::shared_ptr<node> second)
+	{
+
+		number = first->number - second->number;
+		dwrt_parent.insert({ first.get(),1.0f });
+		dwrt_parent.insert({ second.get(),-1.0f });
+		// add parents;
+		parents.resize(2);
+		parents[0] = first;
+		parents[1] = second;
+
+
+	}
+};
 struct add_node :public node
 {
 
@@ -53,12 +70,8 @@ struct add_node :public node
 	{
 
 		number = first->number + second->number;
-		//dwrtx.resize(2);
-		//dwrtx[0] = first->number.partial;
-		//dwrtx[1] = second->number.partial;
 		dwrt_parent.insert({ first.get(),1.0f });
 		dwrt_parent.insert({ second.get(),1.0f });
-
 		// add parents;
 		parents.resize(2);
 		parents[0] = first;
@@ -84,7 +97,7 @@ struct log_node :public node
 	{
 
 		number = log(first->number);
-		dwrt_parent.insert({ first.get(),number.partial });
+		dwrt_parent.insert({ first.get(),1/first->number.value});
 		// add parents;
 		parents.resize(1);
 		parents[0] = first;
@@ -97,7 +110,7 @@ struct exp_node :public node
 	{
 
 		number = exp(first->number);
-		dwrt_parent.insert({ first.get(),number.partial });
+		dwrt_parent.insert({ first.get(),exp(first->number.value)});
 		// add parents;
 		parents.resize(1);
 		parents[0] = first;
@@ -110,7 +123,7 @@ struct sin_node :public node
 	{
 
 		number = sin(first->number);
-		dwrt_parent.insert({ first.get(),number.partial });
+		dwrt_parent.insert({ first.get(),cos(first->number.value) });
 		// add parents;
 		parents.resize(1);
 		parents[0] = first;
@@ -123,7 +136,7 @@ struct cos_node :public node
 	{
 
 		number = cos(first->number);
-		dwrt_parent.insert({ first.get(),number.partial });
+		dwrt_parent.insert({ first.get(), -sin(first->number.value)});
 		// add parents;
 		parents.resize(1);
 		parents[0] = first;
@@ -195,6 +208,13 @@ public:
 		return std::move(variable(op));
 
 	}
+	variable operator-(variable second)
+	{
+
+		std::shared_ptr<node> op = std::make_shared<sub_node>(this->op_node, second.op_node);
+		return std::move(variable(op));
+
+	}
 	variable operator*(variable second)
 	{
 
@@ -256,7 +276,6 @@ public:
 		return (validPath);
 
 	}
-
 	variable differentiate(variable& seed) // compute derivative w.r.t seed node at once
 	{
 
@@ -295,7 +314,7 @@ public:
 
 		}
 	}
-	void about() 
+	void about()
 	{
 		int count = 0;
 		std::vector<std::shared_ptr<node>> visited;
@@ -303,7 +322,6 @@ public:
 		traverse(this->op_node, count, visited);
 
 	}
-
 	float value() const
 	{
 		return  op_node->number.value;
@@ -338,11 +356,11 @@ variable sin(variable x)
 {
 	sin_node opnode(x());
 	std::shared_ptr<node> op = std::make_shared<sin_node>(opnode);
-	return variable(op);
+	return (variable(op));
 }
 variable cos(variable x)
 {
 	cos_node opnode(x());
 	std::shared_ptr<node> op = std::make_shared<cos_node>(opnode);
-	return variable(op);
+	return (variable(op));
 }

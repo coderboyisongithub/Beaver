@@ -5,7 +5,7 @@ namespace bv {}
 
 
 
- struct dual 
+struct dual
 {
 	float value, partial;
 
@@ -21,40 +21,40 @@ namespace bv {}
 		partial = partial_;
 	}
 
-	
-	 dual operator+(dual other)
-	 {
+
+	dual operator+(dual other)
+	{
 		return { value + other.value,	partial + other.partial };
-	 }
-	 dual operator-(dual other)
+	}
+	dual operator-(dual other)
 	{
 		return { value - other.value,	partial - other.partial };
 	}
-	 dual operator*(dual other)
+	dual operator*(dual other)
 	{
-		return { value*other.value,	value*other.partial+other.value*partial};
+		return { value * other.value,	value * other.partial + other.value * partial };
 	}
 };
 
 
-dual log(dual x) 
+dual log(dual x)
 {
-	return dual{ log(x.value),(1 /x.value) };
+	return dual{ log(x.value),(x.partial / x.value) };
 }
 
 dual sin(dual x)
 {
-	return dual{ sin(x.value),cos(x.value) };
+	return dual{ sin(x.value),x.partial*cos(x.value) };
 }
 
 dual cos(dual x)
 {
-	return dual{ cos(x.value),-sin(x.value) };
+	return dual{ cos(x.value),-x.partial*sin(x.value) };
 }
 
 dual exp(dual x)
 {
-	return dual{exp(x.value),exp(x.value)};
+	return dual{ exp(x.value),x.partial*exp(x.value) };
 }
 
 
