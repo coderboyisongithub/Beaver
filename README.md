@@ -55,10 +55,10 @@ int main()
     std::cout<<"at x=0.3" << "value:" << res.value << " partial:" << res.partial;
     
 
-  // Example: obtain partial derivative for sin(x1)+cos(x2);
+  // Example: obtain partial derivative for log(x1)+x1*x2-sin(x2);
 	variable x1(2.00), x2(5.0), x3(3.50f), x4(3.213);
 
-	variable expression = sin(x1) + cos(x2);
+	variable expression = log(x1)+x1*x2-sin(x2);
 
 	variable dx1 = expression.differentiate(x1);
 	variable dx2 = expression.differentiate(x2);
@@ -66,7 +66,7 @@ int main()
 	variable gradient = dx1 + dx2;
 
 
-// We verify our result by evaluating: sum of partial shall be equal to gradient of expression evaluated here
+// We verify our result by evaluating: sum of partial shall be equal to gradient of expression evaluated here. It should be equal.
 std::cout << "sum of partial:" << gradient.value() << "actual gradient" << expression.partial(); 
 
 
