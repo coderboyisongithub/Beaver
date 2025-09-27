@@ -1,3 +1,4 @@
+<img width="128" height="128" alt="Beavericon 128" src="https://github.com/user-attachments/assets/1631a345-fe8c-4110-8389-1752982e0a76" />
 
 
 # Beaver
