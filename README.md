@@ -5,8 +5,9 @@
 # Beaver
 Automatic Differentiation system. (brewed🍵✅,ready to serve)
 
-
-There are various occasion where a machine needs to find derivative of a given function, majority of such occasion is asssociated with computers solving optimization problem using gradient based methods.  Optimization is in nearly everything. In order to perform such optimization, it generally require human supervision in defining the derivatives of provided cost function. But it becomes very tedious task to perform and not very practical to program each and every derivative for a given linear or non-linear system. Alternative to such solution is to make machine search for derivative. One approach is to use symbolic differentiation, but its painfully slow for certain application like deep learning, simulation and economics.  
+This is a C++ framework to compute derivatives automatically of a given expression, it is a core mechanics in every deep learning framework, where it use AD to implement gradient based optimization to train neural networks.
+## Overview
+There are various occasion where a machine needs to find derivative of a given function, majority of such occasion is asssociated with computers solving optimization problem using gradient based methods, like training neural networks.  Optimization is in nearly everything. In order to perform such optimization, it generally require human supervision in defining the derivatives of provided cost function. But it becomes very tedious task to perform and not very practical to program each and every derivative for a given linear or non-linear system. Alternative to such solution is to make machine search for derivative. One approach is to use symbolic differentiation, but its painfully slow for certain application like deep learning.
 
 
 Matlab takes 10,000-20,000 microseconds compute partial derivative for $f(x1,x2) = logx1 +x1x2 −sinx2$ using symbolic differentiation, where as its takes 19-25 microsecond for automatic differentiation to compute the partial derivatives for the same, its 1000 times faster atleast. Although, AD have limitation but it is much better solution in certain situation, over symbolic differentiation. Beaver is one of many C++ framework that is capable of searching derivative of given expression on fly automatically.
