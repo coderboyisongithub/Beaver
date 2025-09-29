@@ -5,7 +5,7 @@
 # Beaver
 Automatic Differentiation system. (brewed🍵✅,ready to serve)
 
-This is a C++ framework to compute derivatives automatically of a given expression, it is a core mechanics in every deep learning framework, where it use AD to implement gradient based optimization to train neural networks.
+This is a C++ framework to compute derivatives automatically of a given expression, it is a core mechanics in every deep learning framework, where it use AD to implement gradient based optimization to train neural networks. AD is almost 50% of what you need to build neural networks.
 ## Overview
 There are various occasion where a machine needs to find derivative of a given function, majority of such occasion is asssociated with computers solving optimization problem using gradient based methods, like training neural networks.  Optimization is in nearly everything. In order to perform such optimization, it generally require human supervision in defining the derivatives of provided cost function. But it becomes very tedious task to perform and not very practical to program each and every derivative for a given linear or non-linear system. Alternative to such solution is to make machine search for derivative. One approach is to use symbolic differentiation, but its painfully slow for certain application like deep learning.
 
