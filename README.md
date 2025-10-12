@@ -9,6 +9,56 @@ This is a C++ framework to compute derivatives automatically of a given expressi
 ## Overview
 There are various occasion where a machine needs to find derivative of a given function, majority of such occasion is asssociated with computers solving optimization problem using gradient based methods, like training neural networks.  Optimization is in nearly everything. In order to perform such optimization, it generally require human supervision in defining the derivatives of provided cost function. But it becomes very tedious task to perform and not very practical to program each and every derivative for a given linear or non-linear system. Alternative to such solution is to make machine search for derivative. One approach is to use symbolic differentiation, but its painfully slow for certain application like deep learning.
 
+<table>
+  <tr>
+    <th>Language</th>
+    <th>Symbolic Differentiation (MATLAB)</th>
+    <th>Automatic Differentiation (Beaver C++)</th>
+  </tr>
+  <tr>
+    <td>Program</td>
+    <td>
+      <pre><code>clear; clc
+tic;
+syms x1 x2
+f = log(x1) + x1*x2 - sin(x2);
+df_dx1 = diff(f, x1);  % ∂f/∂x1
+df_dx2 = diff(f, x2);  % ∂f/∂x2
+
+elapsed_time = toc;
+elapsed_time_us = elapsed_time * 1e6;
+fprintf('Elapsed time: %f microseconds\n', elapsed_time_us);
+</code></pre>
+    </td>
+    <td>
+      <pre><code>std::chrono::high_resolution_clock clock;
+std::chrono::time_point start = timeIt(clock);
+// Example: obtain partial derivative for log(x1)+x1*x2-sin(x2);
+variable x1(2.00), x2(5.0), x3(3.50f), x4(3.213);
+variable expression = log(x1) + x1 * x2 - sin(x2);
+variable dx1 = expression.differentiate(x1);
+variable dx2 = expression.differentiate(x2);
+
+std::chrono::time_point stop = timeIt(clock);
+std::cout << "Runtime (microSec): "
+          << (std::chrono::duration_cast&lt;std::chrono::microseconds&gt;(stop - start)).count();
+</code></pre>
+    </td>
+  </tr>
+  <tr>
+    <td>Runtime</td>
+    <td>
+		19,271microseconds
+    </td>
+    <td>
+      30 microseconds
+    </td>
+  </tr>
+
+</table>
+
+
+
 
 Matlab takes 10,000-20,000 microseconds compute partial derivative for $f(x1,x2) = logx1 +x1x2 −sinx2$ using symbolic differentiation, where as its takes 19-25 microsecond for automatic differentiation to compute the partial derivatives for the same, its 1000 times faster atleast. Although, AD have limitation but it is much better solution in certain situation, over symbolic differentiation. Beaver is one of many C++ framework that is capable of searching derivative of given expression on fly automatically.
 
