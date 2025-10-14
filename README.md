@@ -60,7 +60,7 @@ std::cout << "Runtime (microSec): "
 
 
 
-Matlab takes 10,000-20,000 microseconds compute partial derivative for $f(x1,x2) = logx1 +x1x2 −sinx2$ using symbolic differentiation, where as its takes 19-25 microsecond for automatic differentiation to compute the partial derivatives for the same, its 1000 times faster atleast. Although, AD have limitation but it is much better solution in certain situation, over symbolic differentiation. Beaver is one of many C++ framework that is capable of searching derivative of given expression on fly automatically.
+For example, Matlab takes 10,000-20,000 microseconds compute partial derivative for $f(x1,x2) = logx1 +x1x2 −sinx2$ using symbolic differentiation, where as its takes 19-25 microsecond for automatic differentiation to compute the partial derivatives for the same, its 1000 times faster atleast. Although, AD have limitation but it is much better solution in certain situation, over symbolic differentiation. Beaver is one of many C++ framework that is capable of searching derivative of given expression on fly automatically.
 
 ## Build instruction.
 ### windows (x64) 🪟
@@ -131,7 +131,17 @@ std::cout << "sum of partial:" << gradient.value() << "actual gradient" << expre
 ```
 Expression defined using "variable" will form a computational graph during runtime, and use that graph to search the derivative. 
 
-Currently, it cannot compute derivative for updated inputs. Once the expression is defined at particular value for input variables it will stay that way. I am working on fixing this as next update on this.
+## Capabilities
+- ✅Can define an mathmetical expression using Dual or Variable.
+- ✅Can compute partial derivative of expression using Variable
+- ✅Can compute gradient(sum of all partial) using Dual or Variable.
+
+## limitation
+
+- ❌ Currently, it cannot compute derivative for updated inputs. Once the expression is defined at particular value for input variables it will stay that way. I am working on fixing this as next update on this.
+- ❌ Currently you can work with few infinite series sum functions:exp,log,sin and cos.
+  
+
 
 # License
 MIT License
