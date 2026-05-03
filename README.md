@@ -2,7 +2,7 @@
 <img width="128" height="128" alt="Beavericon_transparent" src="https://github.com/user-attachments/assets/6a9a698e-9bd8-4694-acdf-0681b2c53900" />
 
 
-# Beaver
+# Beaver( dev exported to gitlab now)
 Automatic Differentiation system. (brewed🍵✅,ready to serve)
 
 This is a C++ framework to compute derivatives automatically of a given expression, it is a core mechanics in every deep learning framework, where it use AD to implement gradient based optimization to train neural networks. AD is almost 50% of what you need to build neural networks.
